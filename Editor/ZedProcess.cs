@@ -1,3 +1,4 @@
+using Unity.CodeEditor;
 using UnityEngine;
 
 namespace UnityZed
@@ -15,12 +16,13 @@ namespace UnityZed
 
         public bool OpenProject(string filePath = "", int line = -1, int column = -1)
         {
+            sLogger.Log("OpenProject");
+
             // TODO: At the moment, Zed does not support opening a line/column from the command line
             //       and while IPC isn't implemented between this class & zed plugin, we can open new files
-            //       on existing zed instance. So we just return 'false' here and unity will call zed by itself.
+            //       on existing zed instance.
 
-            sLogger.Log("OpenProject");
-            return false;
+            return CodeEditor.OSOpenFile(m_Path.ToString(), filePath);
         }
 
         public void SyncAll()

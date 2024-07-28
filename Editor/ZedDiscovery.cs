@@ -12,7 +12,7 @@ namespace UnityZed
             var results = new List<CodeEditor.Installation>();
 
             var candidates = new NPath[] {
-                new ("/Applications/Zed.app/Contents/MacOS/Zed"),
+                new ("/Applications/Zed.app/Contents/MacOS/cli"),
                 new ("/usr/local/bin/zed"),
             };
 
