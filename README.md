@@ -8,6 +8,7 @@ This is absolutly *alpha* version so there are only minimal working features.
 
 - [x] Discovery of Zed installations
 - [x] Register as Unity external tools
+- [ ] Support Zed CSharp sln/csproj generation
 - [ ] Write Zed extension to deeper integration via IPC
 
 ## Installation
