@@ -7,22 +7,23 @@ namespace UnityZed
     {
         private static readonly ILogger sLogger = ZedLogger.Create();
 
-        private readonly NPath m_Path;
+        private readonly NPath m_ExecPath;
+        private readonly NPath m_ProjectPath;
 
         public ZedProcess(string path)
         {
-            m_Path = path;
+            m_ExecPath = path;
+            m_ProjectPath = new NPath(Application.dataPath).Parent;
         }
 
         public bool OpenProject(string filePath = "", int line = -1, int column = -1)
         {
             sLogger.Log("OpenProject");
+            
+            line = Mathf.Max(0, line);
+            column = Mathf.Max(0, column);
 
-            // TODO: At the moment, Zed does not support opening a line/column from the command line
-            //       and while IPC isn't implemented between this class & zed plugin, we can open new files
-            //       on existing zed instance.
-
-            return CodeEditor.OSOpenFile(m_Path.ToString(), filePath);
+            return CodeEditor.OSOpenFile(m_ExecPath.ToString(), $"{m_ProjectPath} {filePath}:{line}:{column}");
         }
 
         public void SyncAll()

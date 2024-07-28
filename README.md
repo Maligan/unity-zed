@@ -8,9 +8,7 @@ This is absolutly *alpha* version so there are only minimal working features.
 
 - [x] Discovery of Zed installations
 - [x] Register as Unity external tools
-- [ ] Add Zed extension for IPC
-    - [ ] Open project as a workspace
-    - [ ] Open file at a specific line and column
+- [ ] Write Zed extension to deeper integration via IPC
 
 ## Installation
 

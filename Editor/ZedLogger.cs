@@ -10,7 +10,13 @@ namespace UnityZed
         {
             var path = new NPath(filePath);
             var tag = path.FileNameWithoutExtension;
-            var handler = new LogHandler(tag, null); // Debug.unityLogger.logHandler
+
+#if UNITY_ZED_DEBUG
+            var handler = new LogHandler(tag, Debug.unityLogger.logHandler);
+#else
+            var handler = new LogHandler(tag, null);
+#endif
+
             return new Logger(handler);
         }
 
