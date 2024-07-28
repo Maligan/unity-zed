@@ -22,11 +22,11 @@ namespace UnityZed
                 {
                     var name = new StringBuilder("Zed");
 
-                    var version = GetVersionFromPlist(candidate);
-                    if (version != null)
+                    if (TryGetVersionFromPlist(candidate, out var version))
                         name.Append($" [{version}]");
 
-                    results.Add(new() {
+                    results.Add(new()
+                    {
                         Name = name.ToString(),
                         Path = candidate.MakeAbsolute().ToString(),
                     });
@@ -53,18 +53,21 @@ namespace UnityZed
             return false;
         }
 
-        private static string GetVersionFromPlist(NPath path)
+        private static bool TryGetVersionFromPlist(NPath path, out string version)
         {
+            version = null;
+
             var plistPath = path.Combine("../../").Combine("Info.plist");
             if (plistPath.FileExists() == false)
-                return null;
+                return false;
 
             var xPath = new XPathDocument(plistPath.ToString());
             var xNavigator = xPath.CreateNavigator().SelectSingleNode("/plist/dict/key[text()='CFBundleShortVersionString']/following-sibling::string[1]/text()");
             if (xNavigator == null)
-                return null;
+                return false;
 
-            return xNavigator.Value;
+            version = xNavigator.Value;
+            return true;
         }
     }
 }
