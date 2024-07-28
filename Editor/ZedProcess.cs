@@ -9,22 +9,22 @@ namespace UnityZed
         private static readonly ILogger sLogger = ZedLogger.Create();
 
         private readonly NPath m_ExecPath;
-        private readonly NPath m_AssetsPath;
-        private readonly NPath m_PackagesPath;
+        private readonly NPath m_ProjectPath;
 
         public ZedProcess(string path)
         {
             m_ExecPath = path;
-            m_AssetsPath = new NPath(Application.dataPath);
-            m_PackagesPath = m_AssetsPath.Parent.Combine("Packages");
+            m_ProjectPath = new NPath(Application.dataPath).Parent;
         }
 
         public bool OpenProject(string filePath = "", int line = -1, int column = -1)
         {
             sLogger.Log("OpenProject");
 
-            var args = new StringBuilder($"{m_AssetsPath} {m_PackagesPath}");
+            // always add project path
+            var args = new StringBuilder($"{m_ProjectPath}");
 
+            // if file path is provided, add it too
             if (!string.IsNullOrEmpty(filePath))
             {
                 args.Append(" -a ");
@@ -45,11 +45,5 @@ namespace UnityZed
 
             return CodeEditor.OSOpenFile(m_ExecPath.ToString(), args.ToString());
         }
-
-        public void SyncAll()
-            => sLogger.Log("SyncAll");
-
-        public void SyncIfNeeded(string[] addedFiles, string[] deletedFiles, string[] movedFiles, string[] movedFromFiles, string[] importedFiles)
-            => sLogger.Log("SyncIfNeeded");
     }
 }
