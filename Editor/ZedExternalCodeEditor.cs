@@ -21,8 +21,6 @@ namespace UnityZed
             return (IGenerator)Activator.CreateInstance(type);
         }
 
-        static ZedExternalCodeEditor() => CodeEditor.Register(new ZedExternalCodeEditor());
-
         private static readonly ILogger sLogger = ZedLogger.Create();
         private static readonly ZedDiscovery sDiscovery = new();
 
@@ -56,8 +54,11 @@ namespace UnityZed
             Assert.IsNotNull(m_Process);
             Assert.IsNotNull(m_Generator);
 
-            if (!m_Generator.IsSupportedFile(filePath))
+            if (!string.IsNullOrEmpty(filePath) && !m_Generator.IsSupportedFile(filePath))
+            {
+                sLogger.Log($"File '{filePath}' is not supported by the generator.");
                 return false;
+            }
 
             m_Generator.Sync();
 
@@ -67,12 +68,14 @@ namespace UnityZed
         public void SyncAll()
         {
             Assert.IsNotNull(m_Generator);
+
             m_Generator.Sync();
         }
 
         public void SyncIfNeeded(string[] addedFiles, string[] deletedFiles, string[] movedFiles, string[] movedFromFiles, string[] importedFiles)
         {
             Assert.IsNotNull(m_Generator);
+
             m_Generator.SyncIfNeeded(addedFiles.Union(deletedFiles).Union(movedFiles).Union(movedFromFiles), importedFiles);
         }
 

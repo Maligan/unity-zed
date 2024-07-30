@@ -11,9 +11,9 @@ namespace UnityZed
         private readonly NPath m_ExecPath;
         private readonly NPath m_ProjectPath;
 
-        public ZedProcess(string path)
+        public ZedProcess(string execPath)
         {
-            m_ExecPath = path;
+            m_ExecPath = execPath;
             m_ProjectPath = new NPath(Application.dataPath).Parent;
         }
 
