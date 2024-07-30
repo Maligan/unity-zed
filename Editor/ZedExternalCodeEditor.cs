@@ -26,6 +26,7 @@ namespace UnityZed
 
         private ZedProcess m_Process;
         private ZedPreferences m_Preferences;
+        private ZedSettings m_Settings;
         private IGenerator m_Generator;
 
         public void Initialize(string editorInstallationPath)
@@ -33,6 +34,7 @@ namespace UnityZed
             m_Process = new(editorInstallationPath);
             m_Generator = CreateSdkStyleGeneration();
             m_Preferences = new(m_Generator);
+            m_Settings = new();
         }
 
         //
@@ -61,6 +63,7 @@ namespace UnityZed
             }
 
             m_Generator.Sync();
+            m_Settings.Sync();
 
             return m_Process.OpenProject(filePath, line, column);
         }
@@ -70,6 +73,7 @@ namespace UnityZed
             Assert.IsNotNull(m_Generator);
 
             m_Generator.Sync();
+            m_Settings.Sync();
         }
 
         public void SyncIfNeeded(string[] addedFiles, string[] deletedFiles, string[] movedFiles, string[] movedFromFiles, string[] importedFiles)

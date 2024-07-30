@@ -2,6 +2,7 @@ using Unity.CodeEditor;
 using System.Collections.Generic;
 using System.Xml.XPath;
 using System.Text;
+using NiceIO;
 
 namespace UnityZed
 {

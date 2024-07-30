@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using NiceIO;
 
 namespace UnityZed
 {
@@ -29,7 +30,7 @@ namespace UnityZed
             {
                 m_Tag = tag;
                 m_LogHandler = logHandler;
-            } 
+            }
 
             public void LogException(Exception exception, UnityEngine.Object context)
                 => m_LogHandler?.LogException(exception, context);

@@ -1,4 +1,4 @@
-﻿// The MIT License(MIT)
+// The MIT License(MIT)
 // =====================
 //
 // Copyright © `2015-2017` `Lucas Meijer`
@@ -37,10 +37,10 @@ using System.Runtime.Serialization;
 using FILETIME = System.Runtime.InteropServices.ComTypes.FILETIME;
 
 //Lets make it hard to accidentally use System.IO.File & System.IO.Directly, and require that it is always completely spelled out.
-using File = UnityZed.Do_Not_Use_File_Directly_Use_FileSystem_Active_Instead;
-using Directory = UnityZed.Do_Not_Use_Directory_Directly_Use_FileSystem_Active_Instead;
+using File = NiceIO.Do_Not_Use_File_Directly_Use_FileSystem_Active_Instead;
+using Directory = NiceIO.Do_Not_Use_Directory_Directly_Use_FileSystem_Active_Instead;
 
-namespace UnityZed
+namespace NiceIO
 {
     /// <summary>
     /// A filesystem path.
@@ -661,7 +661,7 @@ namespace UnityZed
         /// <param name="a">The first NPath to compare.</param>
         /// <param name="b">The second NPath to compare.</param>
         /// <returns>True if the NPaths are both equal (or both null), false otherwise. See <see cref="Equals(NPath)">Equals.</see></returns>
-        public static bool operator==(NPath a, NPath b)
+        public static bool operator ==(NPath a, NPath b)
         {
             // If both are null, or both are same instance, return true.
             if (ReferenceEquals(a, b))
@@ -723,7 +723,7 @@ namespace UnityZed
         /// <param name="a">The first NPath to compare.</param>
         /// <param name="b">The second NPath to compare.</param>
         /// <returns>True if the NPaths are not equal, false otherwise.</returns>
-        public static bool operator!=(NPath a, NPath b)
+        public static bool operator !=(NPath a, NPath b)
         {
             return !(a == b);
         }
@@ -839,7 +839,7 @@ namespace UnityZed
         public NPath[] Files(string[] extensions, bool recurse = false)
         {
             if (!DirectoryExists() || extensions.Length == 0)
-                return new NPath[] {};
+                return new NPath[] { };
 
             return FileSystem.Active.Directory_GetFiles(this, "*", recurse ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly).Where(p => extensions.Contains(p.Extension)).ToArray();
         }
@@ -1796,21 +1796,21 @@ namespace UnityZed
                     {
                         foreach (var file in files)
                         {
-	                        try
-	                        {
-		                        // remove read-only attribute or delete will fail
-		                        var attributes = File_GetAttributes(file);
-		                        if ((attributes & FileAttributes.ReadOnly) != 0)
-			                        File_SetAttributes(file, attributes & ~FileAttributes.ReadOnly);
+                            try
+                            {
+                                // remove read-only attribute or delete will fail
+                                var attributes = File_GetAttributes(file);
+                                if ((attributes & FileAttributes.ReadOnly) != 0)
+                                    File_SetAttributes(file, attributes & ~FileAttributes.ReadOnly);
 
-		                        File_Delete(file);
-	                        }
-		                    // Another process/thread may have deleted (or be in the process of deleting) the file since the time we listed out the directory, causing any of these exceptions.
-	                        catch (Exception e) when (e is InvalidOperationException or FileNotFoundException or UnauthorizedAccessException)
-	                        {
-		                        if (file.FileExists())
-			                        throw;
-	                        }
+                                File_Delete(file);
+                            }
+                            // Another process/thread may have deleted (or be in the process of deleting) the file since the time we listed out the directory, causing any of these exceptions.
+                            catch (Exception e) when (e is InvalidOperationException or FileNotFoundException or UnauthorizedAccessException)
+                            {
+                                if (file.FileExists())
+                                    throw;
+                            }
                         }
 
                         foreach (var dir in dirs)
@@ -2366,7 +2366,7 @@ namespace UnityZed
                 public static extern IntPtr FindFirstFile(string fileName, out FIND_DATA findData);
 
                 [DllImport(@"kernel32.dll", CharSet = CharSet.Unicode)]
-                [return : MarshalAs(UnmanagedType.Bool)]
+                [return: MarshalAs(UnmanagedType.Bool)]
                 public static extern bool FindNextFile(IntPtr handle, out FIND_DATA findData);
 
                 [DllImport(@"kernel32.dll", CharSet = CharSet.Unicode)]
@@ -2383,31 +2383,31 @@ namespace UnityZed
                 public const uint INVALID_FILE_ATTRIBUTES = 0xffffffff;
 
                 [DllImport(@"kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-                [return : MarshalAs(UnmanagedType.Bool)]
+                [return: MarshalAs(UnmanagedType.Bool)]
                 public static extern bool DeleteFile(string lpFileName);
 
                 [DllImport(@"kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-                [return : MarshalAs(UnmanagedType.Bool)]
+                [return: MarshalAs(UnmanagedType.Bool)]
                 public static extern bool CopyFile(string sourceFileName, string destFileName, bool failIfExists);
 
                 [DllImport(@"kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-                [return : MarshalAs(UnmanagedType.Bool)]
+                [return: MarshalAs(UnmanagedType.Bool)]
                 public static extern bool MoveFile(string existingFileName, string newFileName);
 
                 [DllImport(@"kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-                [return : MarshalAs(UnmanagedType.Bool)]
+                [return: MarshalAs(UnmanagedType.Bool)]
                 public static extern bool MoveFileEx(string existingFileName, string newFileName, MoveFileExFlags exFlags);
 
                 [DllImport(@"kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-                [return : MarshalAs(UnmanagedType.Bool)]
+                [return: MarshalAs(UnmanagedType.Bool)]
                 public static extern bool CreateDirectory(string lpPathName, IntPtr lpSecurityAttributes);
 
                 [DllImport(@"kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-                [return : MarshalAs(UnmanagedType.Bool)]
+                [return: MarshalAs(UnmanagedType.Bool)]
                 public static extern bool RemoveDirectory(string lpPathName);
 
                 [DllImport(@"kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-                [return : MarshalAs(UnmanagedType.Bool)]
+                [return: MarshalAs(UnmanagedType.Bool)]
                 public static extern bool SetCurrentDirectory(string lpPathName);
 
                 [DllImport(@"kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
@@ -2424,7 +2424,7 @@ namespace UnityZed
                     IntPtr hTemplateFile);
 
                 [DllImport(@"kernel32.dll", EntryPoint = "SetFileTime", SetLastError = true, CharSet = CharSet.Unicode)]
-                [return : MarshalAs(UnmanagedType.Bool)]
+                [return: MarshalAs(UnmanagedType.Bool)]
                 public static extern bool SetLastWriteFileTime(
                     IntPtr hFile,
                     IntPtr lpCreationTime,
