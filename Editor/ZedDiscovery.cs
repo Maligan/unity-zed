@@ -12,24 +12,32 @@ namespace UnityZed
         {
             var results = new List<CodeEditor.Installation>();
 
-            var candidates = new NPath[] {
-                new ("/Applications/Zed.app/Contents/MacOS/cli"),
-                new ("/usr/local/bin/zed"),
+            var candidates = new (NPath path, TryGetVersion tryGetVersion)[] {
+
+                // [MacOS]
+                ("/Applications/Zed.app/Contents/MacOS/cli", TryGetVersionFromPlist),
+                ("/usr/local/bin/zed", null),
+
+                // [Linux] (Flatpak)
+                ("/var/lib/flatpak/app/dev.zed.Zed/current/active/files/bin/zed", null),
             };
 
             foreach (var candidate in candidates)
             {
-                if (candidate.FileExists())
+                var candidatePath = candidate.path;
+                var candidateTryGetVersion = candidate.tryGetVersion ?? TryGetVersionFallback;
+
+                if (candidatePath.FileExists())
                 {
                     var name = new StringBuilder("Zed");
 
-                    if (TryGetVersionFromPlist(candidate, out var version))
+                    if (candidateTryGetVersion(candidatePath, out var version))
                         name.Append($" [{version}]");
 
                     results.Add(new()
                     {
                         Name = name.ToString(),
-                        Path = candidate.MakeAbsolute().ToString(),
+                        Path = candidatePath.MakeAbsolute().ToString(),
                     });
 
                     break;
@@ -51,6 +59,17 @@ namespace UnityZed
             }
 
             installation = default;
+            return false;
+        }
+
+        //
+        // TryGetVersion implementations
+        //
+        private delegate bool TryGetVersion(NPath path, out string vertion);
+
+        private static bool TryGetVersionFallback(NPath path, out string version)
+        {
+            version = null;
             return false;
         }
 
