@@ -24,6 +24,9 @@ namespace UnityZed
                 // [Linux] (Repo) 
                 ("/usr/bin/zeditor", null),
 
+                // [Linux] (NixOS)
+                ("/run/current-system/sw/bin/zeditor", null),
+
                 // [Linux] (Official Website)
                 (NPath.HomeDirectory.Combine(".local/bin/zed"), null),
             };
