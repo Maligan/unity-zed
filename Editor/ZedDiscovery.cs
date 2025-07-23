@@ -26,6 +26,10 @@ namespace UnityZed
 
                 // [Linux] (NixOS)
                 ("/run/current-system/sw/bin/zeditor", null),
+                // [Linux] (NixOS HomeManager from Zed Flake)
+                ("/etc/profiles/per-user/linx/bin/zed", null),
+                // [Linux] (NixOS HomeManager from NixPkgs)
+                ("/etc/profiles/per-user/linx/bin/zeditor", null),
 
                 // [Linux] (Official Website)
                 (NPath.HomeDirectory.Combine(".local/bin/zed"), null),
