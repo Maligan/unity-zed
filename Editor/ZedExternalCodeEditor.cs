@@ -22,7 +22,7 @@ namespace UnityZed
         }
 
         private static readonly ILogger sLogger = ZedLogger.Create();
-        private static readonly ZedDiscovery sDiscovery = new();
+        private static readonly ZedDiscovery sDiscovery = new ZedDiscovery();
 
         private ZedProcess m_Process;
         private ZedPreferences m_Preferences;
@@ -31,10 +31,10 @@ namespace UnityZed
 
         public void Initialize(string editorInstallationPath)
         {
-            m_Process = new(editorInstallationPath);
+            m_Process = new ZedProcess(editorInstallationPath);
             m_Generator = CreateSdkStyleGeneration();
-            m_Preferences = new(m_Generator);
-            m_Settings = new();
+            m_Preferences = new ZedPreferences(m_Generator);
+            m_Settings = new ZedSettings();
         }
 
         //

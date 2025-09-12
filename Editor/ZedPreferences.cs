@@ -36,7 +36,9 @@ namespace UnityZed
             SettingsButton(ProjectGenerationFlag.Registry, "Registry packages", "", m_Generator);
             SettingsButton(ProjectGenerationFlag.Git, "Git packages", "", m_Generator);
             SettingsButton(ProjectGenerationFlag.BuiltIn, "Built-in packages", "", m_Generator);
+#if UNITY_2019_3_OR_NEWER
             SettingsButton(ProjectGenerationFlag.LocalTarBall, "Local tarball", "", m_Generator);
+#endif
             SettingsButton(ProjectGenerationFlag.Unknown, "Packages from unknown sources", "", m_Generator);
             SettingsButton(ProjectGenerationFlag.PlayerAssemblies, "Player projects", "For each player project generate an additional csproj with the name 'project-player.csproj'", m_Generator);
             RegenerateProjectFiles(m_Generator);

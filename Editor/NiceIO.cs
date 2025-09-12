@@ -1806,7 +1806,7 @@ namespace NiceIO
                                 File_Delete(file);
                             }
                             // Another process/thread may have deleted (or be in the process of deleting) the file since the time we listed out the directory, causing any of these exceptions.
-                            catch (Exception e) when (e is InvalidOperationException or FileNotFoundException or UnauthorizedAccessException)
+                            catch (Exception e) when (e is InvalidOperationException || e is FileNotFoundException || e is UnauthorizedAccessException)
                             {
                                 if (file.FileExists())
                                     throw;

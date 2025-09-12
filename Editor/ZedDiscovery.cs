@@ -47,7 +47,7 @@ namespace UnityZed
                     if (candidateTryGetVersion(candidatePath, out var version))
                         name.Append($" [{version}]");
 
-                    results.Add(new()
+                    results.Add(new CodeEditor.Installation()
                     {
                         Name = name.ToString(),
                         Path = candidatePath.MakeAbsolute().ToString(),
