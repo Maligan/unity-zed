@@ -1,6 +1,6 @@
 {
-    "name": "com.maligan.zed-unity",
-    "rootNamespace": "UnityZed",
+    "name": "com.superjura.unity-zed-integration",
+    "rootNamespace": "UnityZedIntegration",
     "references": [
         "GUID:b93f844d45cfcc44fa2b0eed5c9ec6bb"
     ],

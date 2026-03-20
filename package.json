@@ -1,8 +1,20 @@
 {
-  "name": "com.maligan.unity-zed",
-  "displayName": "Zed Editor",
-  "description": "Zed Editor integration for Unity",
-  "version": "0.2.3-preview",
+  "name": "com.superjura.unity-zed-integration",
+  "displayName": "Unity Zed Integration",
+  "description": "Unity Zed Integration",
+  "version": "0.9.0",
+  "author": {
+     "name": "SuperJura",
+     "email": "jurica.adamek@gmail.com",
+     "url": "https://github.com/SuperJura"
+  },
+  "license": "MIT",
+  "keywords": [
+      "zed",
+      "unity",
+      "editor",
+      "ide"
+  ],
   "dependencies": {
     "com.unity.ide.visualstudio": "2.0.20"
   }

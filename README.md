@@ -1,22 +1,28 @@
-# Zed for Unity [![openupm](https://img.shields.io/npm/v/com.maligan.unity-zed?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.maligan.unity-zed/)
+# Unity Zed Integration (UZI)
 
-This is a homemade package to integrate [Zed](https://zed.dev) as Unity external script editor.
+A lightweight package to integrate the [Zed editor](https://zed.dev) as your external script editor in Unity.
 
-## Roadmap
+> *Initially forked from [Unity-zed](https://github.com/maligan/unity-zed). Forked to add Windows support.*
 
-- [x] Discovery of Zed installations
-- [x] Register as Unity external tools
-- [x] Support C# sln/csproj generation
-- [ ] Write Zed extension to deeper integration via IPC
+---
+
+## Supported Platforms
+
+* **Windows**
+* **macOS**
+* **Linux**
+
+---
 
 ## Installation
 
-```sh
-# 1. Via OpenUPM
-openupm add com.maligan.unity-zed
+You can install this package directly through the Unity Package Manager using the GitHub repository URL:
 
-# 2. Via PackageManger & GitHub URL
-https://github.com/maligan/unity-zed.git
+1. Open Unity and navigate to **Window > Package Management > Package Manager**.
+2. Click the **+** (plus) button in the top left corner of the window.
+3. Select **Add package from git URL...**
+4. Paste the following link and click **Add**:
 
-# 3. Via copy this repository content into Packages/ folder
+```text
+https://github.com/SuperJura/unity-zed-integration.git
 ```
