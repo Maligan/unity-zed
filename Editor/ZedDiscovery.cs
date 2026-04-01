@@ -33,6 +33,9 @@ namespace UnityZed
 
                 // [Linux] (Official Website)
                 (NPath.HomeDirectory.Combine(".local/bin/zed"), null),
+
+                // [Windows] (Official Website)
+                (NPath.HomeDirectory.Combine("AppData/Local/Programs/Zed/Zed.exe"), null),
             };
 
             foreach (var candidate in candidates)
@@ -50,7 +53,7 @@ namespace UnityZed
                     results.Add(new()
                     {
                         Name = name.ToString(),
-                        Path = candidatePath.MakeAbsolute().ToString(),
+                        Path = candidatePath.MakeAbsolute().ToString(SlashMode.Native),
                     });
 
                     break;
