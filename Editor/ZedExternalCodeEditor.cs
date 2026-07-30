@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Linq;
 using Unity.CodeEditor;
 using UnityEngine;
@@ -28,6 +29,7 @@ namespace UnityZed
         private ZedPreferences m_Preferences;
         private ZedSettings m_Settings;
         private IGenerator m_Generator;
+        private bool m_CacheResetWarningLogged;
 
         public void Initialize(string editorInstallationPath)
         {
@@ -35,6 +37,10 @@ namespace UnityZed
             m_Generator = CreateSdkStyleGeneration();
             m_Preferences = new(m_Generator);
             m_Settings = new();
+            m_Settings.Sync();
+
+            if (m_Generator.HasSolutionBeenGenerated() == false)
+                m_Generator.Sync();
         }
 
         //
@@ -56,9 +62,15 @@ namespace UnityZed
             Assert.IsNotNull(m_Process);
             Assert.IsNotNull(m_Generator);
 
-            if (!string.IsNullOrEmpty(filePath) && !m_Generator.IsSupportedFile(filePath))
+            if (!string.IsNullOrEmpty(filePath) && m_Generator.IsSupportedFile(filePath) == false)
             {
-                sLogger.Log($"File '{filePath}' is not supported by the generator.");
+                sLogger.LogWarning($"File '{filePath}' is not supported by the project generator.");
+                return false;
+            }
+
+            if (!string.IsNullOrEmpty(filePath) && File.Exists(filePath) == false)
+            {
+                sLogger.LogWarning($"File '{filePath}' does not exist.");
                 return false;
             }
 
@@ -72,6 +84,8 @@ namespace UnityZed
         {
             Assert.IsNotNull(m_Generator);
 
+            ResetProjectGenerationCache();
+            AssetDatabase.Refresh();
             m_Generator.Sync();
             m_Settings.Sync();
         }
@@ -80,7 +94,45 @@ namespace UnityZed
         {
             Assert.IsNotNull(m_Generator);
 
-            m_Generator.SyncIfNeeded(addedFiles.Union(deletedFiles).Union(movedFiles).Union(movedFromFiles), importedFiles);
+            ResetProjectGenerationCache();
+            m_Generator.SyncIfNeeded(
+                (addedFiles ?? Array.Empty<string>())
+                    .Union(deletedFiles ?? Array.Empty<string>())
+                    .Union(movedFiles ?? Array.Empty<string>())
+                    .Union(movedFromFiles ?? Array.Empty<string>()),
+                importedFiles ?? Array.Empty<string>());
+            m_Settings.Sync();
+        }
+
+        private void ResetProjectGenerationCache()
+        {
+            try
+            {
+                var provider = m_Generator.AssemblyNameProvider;
+                for (var type = provider.GetType(); type != null; type = type.BaseType)
+                {
+                    var method = type.GetMethod(
+                        "ResetPackageInfoCache",
+                        System.Reflection.BindingFlags.Instance
+                        | System.Reflection.BindingFlags.NonPublic
+                        | System.Reflection.BindingFlags.DeclaredOnly);
+                    if (method == null)
+                        continue;
+
+                    method.Invoke(provider, null);
+                    return;
+                }
+            }
+            catch (Exception exception)
+            {
+                // This is an optimization for package moves and updates. Project sync must
+                // continue if a future Visual Studio Editor package changes its internals.
+                if (m_CacheResetWarningLogged == false)
+                {
+                    m_CacheResetWarningLogged = true;
+                    sLogger.LogWarning($"Could not reset the project-generation cache: {exception.Message}");
+                }
+            }
         }
 
         //
