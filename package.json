@@ -1,8 +1,8 @@
 {
   "name": "com.maligan.unity-zed",
   "displayName": "Zed Editor",
-  "description": "Zed Editor integration for Unity",
-  "version": "0.2.3-preview",
+  "description": "First-class Zed Editor integration for Unity with project generation, project analyzers, and Unity message completions",
+  "version": "0.4.2-preview",
   "dependencies": {
     "com.unity.ide.visualstudio": "2.0.20"
   }
