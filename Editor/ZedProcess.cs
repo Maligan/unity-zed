@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using System.IO;
 using System.Text;
 using NiceIO;
 using Unity.CodeEditor;
@@ -44,7 +46,37 @@ namespace UnityZed
                 }
             }
 
+            if (Application.platform == RuntimePlatform.WindowsEditor)
+                return OpenOnWindows(args.ToString());
+
             return CodeEditor.OSOpenFile(m_ExecPath.ToString(), args.ToString());
+        }
+
+        // On Windows the chosen editor is the GUI app (Zed.exe). The `-a` and
+        // `file:line:column` arguments belong to the CLI next to it (bin\zed.exe),
+        // a console program, so start it without a console window.
+        private bool OpenOnWindows(string args)
+        {
+            var exe = m_ExecPath.ToString();
+            var cli = Path.Combine(Path.GetDirectoryName(exe) ?? "", "bin", "zed.exe");
+            if (File.Exists(cli))
+                exe = cli;
+
+            try
+            {
+                var startInfo = new ProcessStartInfo(exe, args)
+                {
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                };
+                Process.Start(startInfo)?.Dispose();
+                return true;
+            }
+            catch (System.Exception e)
+            {
+                UnityEngine.Debug.LogWarning($"[UnityZed] Failed to start '{exe}': {e.Message}");
+                return false;
+            }
         }
     }
 }

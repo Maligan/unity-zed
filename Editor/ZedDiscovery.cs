@@ -1,8 +1,12 @@
 using Unity.CodeEditor;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Xml.XPath;
 using System.Text;
 using NiceIO;
+using UnityEngine;
 
 namespace UnityZed
 {
@@ -33,6 +37,10 @@ namespace UnityZed
 
                 // [Linux] (Official Website)
                 (NPath.HomeDirectory.Combine(".local/bin/zed"), null),
+
+                // [Windows] (per-user installer, then system-wide installer)
+                (WindowsPath(Environment.SpecialFolder.LocalApplicationData, "Programs/Zed/Zed.exe"), TryGetVersionFromExe),
+                (WindowsPath(Environment.SpecialFolder.ProgramFiles, "Zed/Zed.exe"), TryGetVersionFromExe),
             };
 
             foreach (var candidate in candidates)
@@ -64,7 +72,7 @@ namespace UnityZed
         {
             foreach (var installed in GetInstallations())
             {
-                if (installed.Path == editorPath)
+                if (SamePath(installed.Path, editorPath))
                 {
                     installation = installed;
                     return true;
@@ -73,6 +81,36 @@ namespace UnityZed
 
             installation = default;
             return false;
+        }
+
+        // Windows paths ignore case and accept either slash, so the editor path Unity
+        // saved may spell the same Zed.exe differently than discovery does.
+        private static bool SamePath(string a, string b)
+        {
+            if (string.IsNullOrEmpty(a) || string.IsNullOrEmpty(b))
+                return false;
+
+            if (Application.platform != RuntimePlatform.WindowsEditor)
+                return a == b;
+
+            try
+            {
+                return string.Equals(Path.GetFullPath(a), Path.GetFullPath(b), StringComparison.OrdinalIgnoreCase);
+            }
+            catch (Exception)
+            {
+                return string.Equals(a, b, StringComparison.OrdinalIgnoreCase);
+            }
+        }
+
+        // Off Windows these folders are missing or hold no Zed.exe, so the candidate is skipped.
+        private static NPath WindowsPath(Environment.SpecialFolder folder, string relative)
+        {
+            var root = Environment.GetFolderPath(folder);
+            if (string.IsNullOrEmpty(root))
+                return new NPath("/nonexistent-zed-windows-path");
+
+            return new NPath(Path.Combine(root, relative));
         }
 
         //
@@ -101,6 +139,22 @@ namespace UnityZed
 
             version = xNavigator.Value;
             return true;
+        }
+
+        private static bool TryGetVersionFromExe(NPath path, out string version)
+        {
+            version = null;
+
+            try
+            {
+                version = FileVersionInfo.GetVersionInfo(path.ToString()).ProductVersion;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return !string.IsNullOrEmpty(version);
         }
     }
 }
